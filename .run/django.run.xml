@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="django" type="Python.DjangoServer" factoryName="Django server">
+    <module name="todo" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="DJANGO_SETTINGS_MODULE" value="todo.settings" />
+    </envs>
+    <option name="SDK_HOME" value="$USER_HOME$/.virtualenvs/todo/bin/python" />
+    <option name="SDK_NAME" value="Python 3.11 (todo)" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="com.fapiko.jetbrains.plugins.better_direnv.runconfigs.PycharmRunConfigurationExtension">
+      <option name="DIRENV_ENABLED" value="false" />
+      <option name="DIRENV_TRUSTED" value="false" />
+    </EXTENSION>
+    <option name="launchJavascriptDebuger" value="true" />
+    <option name="port" value="8001" />
+    <option name="host" value="0" />
+    <option name="additionalOptions" value="--nopin" />
+    <option name="browserUrl" value="http://127.0.0.1:8001/" />
+    <option name="runTestServer" value="false" />
+    <option name="runNoReload" value="false" />
+    <option name="useCustomRunCommand" value="true" />
+    <option name="customRunCommand" value="runserver_plus" />
+    <method v="2" />
+  </configuration>
+</component>

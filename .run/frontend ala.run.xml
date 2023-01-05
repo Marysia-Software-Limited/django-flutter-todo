@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="frontend ala" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--dart-entrypoint-args http://94.23.247.130:8085" />
+    <option name="filePath" value="$PROJECT_DIR$/frontend/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>
