@@ -2,7 +2,7 @@ import 'package:flet/flet.dart';
 import 'package:flutter/material.dart';
 
 void main(List<String> args) async {
-  String backendUrl = "http://localhost:8085";
+  String backendUrl = "http://94.23.247.130:8085";
 
   if (args.isNotEmpty) {
     backendUrl = args[0];
@@ -18,9 +18,9 @@ class DjangoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Green Cloud Demo',
-      home: FletApp(pageUrl: "http://localhost:8085"),
+      home: FletApp(pageUrl: backendUrl),
     );
   }
 }
