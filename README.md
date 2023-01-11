@@ -30,3 +30,9 @@ Django based desktop/mobile/web application.
 ## Demo
 
 Working demo [is here](http://ala.hipisi.org.pl:8085).
+
+## Screenshots
+
+![Android app](./todo_pixel4.png)
+
+![iOS app](./todo_iphone14.png)
