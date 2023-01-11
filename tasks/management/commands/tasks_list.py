@@ -1,26 +1,18 @@
 from datetime import datetime
-
-from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import gettext as _
+from django.core.management.base import BaseCommand
 import flet as ft
 
 from tasks.models import Task
 
 
 def main(page: ft.Page):
-    # def add_clicked(e):
-    #     page.add(ft.Checkbox(label=new_task.value))
-    #     new_task.value = ""
-    #     page.update()
-
-    # new_task = ft.TextField(hint_text="Whats needs to be done?")
-
-    # page.add(new_task, ft.FloatingActionButton(icon=ft.icons.ADD, on_click=add_clicked))
 
     columns = []
     fields = [
-        ("name", "Zadanie",),
-        ("is_done", "Zrobione"),
-        ("date_add", "Data dodania")
+        ("name", _("Task"),),
+        ("is_done", _("Is done")),
+        ("date_add", _("Creation date"))
     ]
 
     for field, label in fields:
@@ -61,10 +53,7 @@ def main(page: ft.Page):
 
 
 class Command(BaseCommand):
-    help = 'Import old tools and calibrations'
-
-    # def add_arguments(self, parser):
-    #     parser.add_argument('db', type=str, default="old", required=False)
+    help = _('Show simple task list')
 
     def handle(self, *args, **options):
             try:

@@ -1,4 +1,3 @@
-import json
 import os
 
 from beret_utils import get_config
@@ -9,14 +8,14 @@ base_dir = PathData.main()
 
 DEFAULT_CONFIG = (
     ('PROJECT_NAME', 'todo'),
-    ('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
-    ('POSTGRES_DB', 'todo'),
-    ('POSTGRES_USER', 'beret'),
-    ('POSTGRES_PASSWORD', '6649beret'),
-    ('POSTGRES_HOST', '127.0.0.1'),
-    ('POSTGRES_PORT', ''),
+    ('DB_ENGINE', 'django.db.backends.sqlite3'),
+    ('DB_NAME', base_dir('db.sqlite3').path),
+    ('DB_USER', ''),
+    ('DB_PASSWORD', ''),
+    ('DB_HOST', ''),
+    ('DB_PORT', ''),
     ('PROJECT_APP', base_dir.name),
-    ('SECRET_KEY', "django-insecure-aj#exo2bw$h%ps^hr4o+ch)e_u2ao1j19rd6z0q)l1o#e!9rn5"),
+    ('SECRET_KEY', "very_secret"),
     ("DJANGO_SECRET_KEY", EnvValue('SECRET_KEY')),
     ('DJANGO_DEBUG', True, bool_value),
     ('DJANGO_EMAIL_BACKEND', "django.core.mail.backends.console.EmailBackend"),
@@ -27,12 +26,13 @@ DEFAULT_CONFIG = (
 )
 
 ENV_FILES = (
-    '.env',
     '.local.env',
+    '.env',
 )
 
 Config = get_config(DEFAULT_CONFIG, ENV_FILES)
 config = Config()
 
 if __name__ == '__main__':
-    print(config)
+    for key, value in config.items():
+        print(f"{key}={value}")

@@ -15,6 +15,7 @@ from flet import (
     colors,
     icons,
 )
+from django.utils.translation import gettext as _
 from .models import Task
 
 
@@ -48,12 +49,12 @@ class TaskView(UserControl):
                     controls=[
                         IconButton(
                             icon=icons.CREATE_OUTLINED,
-                            tooltip="Edit To-Do",
+                            tooltip=_("Edit Task"),
                             on_click=self.edit_clicked,
                         ),
                         IconButton(
                             icons.DELETE_OUTLINE,
-                            tooltip="Delete To-Do",
+                            tooltip=_("Delete Task"),
                             on_click=self.delete_clicked,
                         ),
                     ],
@@ -70,7 +71,7 @@ class TaskView(UserControl):
                 IconButton(
                     icon=icons.DONE_OUTLINE_OUTLINED,
                     icon_color=colors.GREEN,
-                    tooltip="Update To-Do",
+                    tooltip=_("Update Task"),
                     on_click=self.save_clicked,
                 ),
             ],
@@ -102,14 +103,15 @@ class TaskView(UserControl):
     @classmethod
     @property
     def active(cls):
-        return Task.objects.filter(is_done=False).count()
+        return Task.objects.filter(is_done=False, delete=False).count()
 
     @classmethod
     def delete_completed(cls):
-        Task.objects.filter(is_done=True).delete()
+        Task.objects.filter(is_done=True).update(delete=True)
 
     def delete(self):
-        self.task.delete()
+        self.task.delete = True
+        self.task.save()
 
     def delete_clicked(self, e):
         self.delete()
@@ -119,12 +121,12 @@ class TaskView(UserControl):
 class TodoApp(UserControl):
     def build(self):
         self.new_task = TextField(
-            hint_text="Co postanowisz, niech się ziści.",
+            hint_text=_("What You will, will be done."),
             expand=True,
             on_submit=self.add_clicked
         )
         self.tasks = Column()
-        for task in Task.objects.all():
+        for task in Task.objects.filter(delete=False):
             task_view = TaskView(task, self.task_status_change, self.task_delete)
             self.tasks.controls.append(task_view)
 
@@ -134,7 +136,7 @@ class TodoApp(UserControl):
             tabs=[Tab(text="all"), Tab(text="active"), Tab(text="completed")],
         )
 
-        self.items_left = Text("0 rzeczy do ziszczenia")
+        self.items_left = Text(_("0 wills to do"))
 
         # application's root control (i.e. "view") containing all other controls
         return Column(
@@ -158,7 +160,7 @@ class TodoApp(UserControl):
                             controls=[
                                 self.items_left,
                                 OutlinedButton(
-                                    text="Wyczyść ziszczone.", on_click=self.clear_clicked
+                                    text=_("Done with what is done."), on_click=self.clear_clicked
                                 ),
                             ],
                         ),
@@ -200,12 +202,12 @@ class TodoApp(UserControl):
                     or (status == "completed" and task_view.is_done)
             )
 
-        self.items_left.value = f"{count} {'rzeczy' if count > 1 else 'rzecz'} do ziszczenia"
+        self.items_left.value = f"{count} {_('wills') if count > 1 else _('will')} {_('to be done.')}"
         super().update()
 
 
 def main(page: Page):
-    page.title = "Nasza Wola Niech Się Stanie"
+    page.title = _("Let it be.")
     page.horizontal_alignment = "center"
     page.scroll = "adaptive"
     page.update()

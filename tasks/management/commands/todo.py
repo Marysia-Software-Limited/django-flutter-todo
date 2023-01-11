@@ -1,14 +1,13 @@
-from datetime import datetime
-
-from django.core.management.base import BaseCommand, CommandError
 import flet as ft
+from django.core.management.base import BaseCommand
+from django.utils.translation import gettext as _
 
 from config import config
 from tasks.todo_app import TodoApp
 
 
 def main(page: ft.Page):
-    page.title = "ToDo App"
+    page.title = _("Django and Flutter based ToDo App")
     page.horizontal_alignment = "center"
     page.scroll = "adaptive"
     page.update()
@@ -21,22 +20,25 @@ def main(page: ft.Page):
 
 
 class Command(BaseCommand):
-    help = 'Import old tools and calibrations'
+    help = _('Run flutter app.')
 
-    # def add_arguments(self, parser):
-    #     parser.add_argument('db', type=str, default="old", required=False)
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--view',
+            type=str,
+            default=ft.FLET_APP,
+            required=False,
+            help=_("Select view from web_browser, flet_app, flet_app_hidden. Default is flet_app")
+        )
 
     def handle(self, *args, **options):
         try:
+            if options["view"]:
+                view = options["view"]
+            else:
+                view = ft.FLET_APP_HIDDEN
             self.stdout.write(self.style.MIGRATE_HEADING('Let run flutter app.'))
-            ft.app(target=main, port=config.APP_PORT, view=ft.FLET_APP_HIDDEN, host=config.APP_HOST)
+            ft.app(target=main, port=config.APP_PORT, view=view, host=config.APP_HOST)
         except Exception as e:
             self.stderr.write(self.style.ERROR(f'Flutter app error: {e}'))
         self.stdout.write(self.style.SUCCESS('Finish running flutter app.'))
-
-
-def parse_date(date_txt: str):
-    try:
-        return datetime.strptime(date_txt, "%d.%m.%Y %H:%M:%S")
-    except Exception as e:
-        return e

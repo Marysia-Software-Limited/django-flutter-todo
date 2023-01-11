@@ -91,17 +91,17 @@ WSGI_APPLICATION = 'todo.wsgi.application'
 DATABASES = {
     'default': {
         # Add "postgresql_psycopg2", "mysql", "sqlite3" or "oracle".
-        'ENGINE':   'django.db.backends.postgresql',
+        'ENGINE':   config.DB_ENGINE,
         # DB name or path to database file if using sqlite3.
-        'NAME':     config.POSTGRES_DB,
+        'NAME':     config.DB_NAME,
         # Not used with sqlite3.
-        'USER':     config.POSTGRES_USER,
+        'USER':     config.DB_USER,
         # Not used with sqlite3.
-        'PASSWORD': config.POSTGRES_PASSWORD,
+        'PASSWORD': config.DB_PASSWORD,
         # Set to empty string for localhost. Not used with sqlite3.
-        'HOST':     config.POSTGRES_HOST,
+        'HOST':     config.DB_HOST,
         # Set to empty string for default. Not used with sqlite3.
-        'PORT':     config.POSTGRES_PORT,
+        'PORT':     config.DB_PORT,
         'ATOMIC_REQUESTS':  True
     }
 }
