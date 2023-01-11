@@ -16,6 +16,9 @@ Django based desktop/mobile/web application.
 - To run server use --view parameter:
   
         $ python manage.py todo --view flet_app_hidden
+- Server will be avaible as http://$APP_HOST:$APP_PORT, default value is 8085, for example:
+
+        $ open http://ala.hipisi.org.pl:8085
 - Compile ./frontend futter app to have separate ready to install application:
 
         $ cd frontend
