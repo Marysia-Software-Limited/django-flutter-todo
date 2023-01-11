@@ -26,3 +26,7 @@ Django based desktop/mobile/web application.
 - You can use simple script to run separate flutter application:
 
         $ python run.py
+
+## Demo
+
+Working demo [is here](http://ala.hipisi.org.pl:8085).
