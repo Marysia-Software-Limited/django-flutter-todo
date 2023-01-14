@@ -159,10 +159,10 @@ class ModelTableControl(ft.UserControl):
             for column in self.columns:
                 if column.type == "text":
                     filters[f"{column.name}__icontains"] = self.v_search.value
-            qs = qs.filters(**filters)
+            qs = qs.filter(**filters)
 
         if self.filters is not None:
-            qs = qs.filters(**self.filters)
+            qs = qs.filter(**self.filters)
 
         self.num_rows = qs.count()
         paginator = Paginator(qs, self.rows_per_page)
