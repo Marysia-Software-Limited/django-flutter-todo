@@ -3,20 +3,7 @@ from django.core.management.base import BaseCommand
 from django.utils.translation import gettext as _
 
 from config import config
-from tasks.todo_app import TodoApp
-
-
-def main(page: ft.Page):
-    page.title = _("Django and Flutter based ToDo App")
-    page.horizontal_alignment = "center"
-    page.scroll = "adaptive"
-    page.update()
-
-    # create application instance
-    app = TodoApp()
-
-    # add application's root control to the page
-    page.add(app)
+from tasks.main_app import main
 
 
 class Command(BaseCommand):

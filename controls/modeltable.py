@@ -2,6 +2,7 @@ import flet as ft
 
 from django.utils.translation import gettext as _
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 ERROR_MSG = "-Err-"
 
@@ -16,6 +17,7 @@ FIELDS_MODELS = {
     'ForeignKey': None,
     'CharField': 'text',
     'BigIntegerField': 'text',
+    'BooleanField': 'bool',
 }
 
 
@@ -53,19 +55,25 @@ class Col:
         )
 
 
+def text_filter_kwargs(field_name: str, value: str):
+    return {
+        f"{field_name}__icontains": value.lower()
+    }
+
+
 class ModelTableControl(ft.UserControl):
 
     def __init__(
-            self,
-            model,
-            columns=None,
-            order=None,
-            rows_per_page=10,
-            title=_("Title"),
-            filters=None,
-            auto_filter=True,
-            get_data_table=None,
-            **data_table_params
+        self,
+        model,
+        columns=None,
+        order=None,
+        rows_per_page=10,
+        title=None,
+        filters=None,
+        auto_filter=True,
+        get_data_table=None,
+        **data_table_params
     ):
         super().__init__()
 
@@ -75,7 +83,7 @@ class ModelTableControl(ft.UserControl):
         self.rows_per_page = rows_per_page
         self.num_pages = 1
         self.num_rows = 0
-        self.title = title
+        self.title = title or model.__name__
         self.filters = filters
         self.auto_filter = auto_filter
         self.data_table_params = data_table_params
@@ -155,11 +163,11 @@ class ModelTableControl(ft.UserControl):
             qs = qs.order_by(self.order)
 
         if self.v_search.value:
-            filters = {}
+            q = Q()
             for column in self.columns:
                 if column.type == "text":
-                    filters[f"{column.name}__icontains"] = self.v_search.value
-            qs = qs.filter(**filters)
+                    q |= Q(**text_filter_kwargs(column.name, self.v_search.value))
+            qs = qs.filter(q)
 
         if self.filters is not None:
             qs = qs.filter(**self.filters)
@@ -176,25 +184,40 @@ class ModelTableControl(ft.UserControl):
     def build(self):
         return ft.Card(
             ft.Container(
-                ft.Column([
-                    ft.Text(self.title, style=ft.TextThemeStyle.HEADLINE_SMALL),
-                    self.data_table,
-                    ft.Row([
-                        ft.IconButton(ft.icons.KEYBOARD_DOUBLE_ARROW_LEFT, on_click=self.goto_first_page,
-                                      tooltip=_("First page")),
-                        ft.IconButton(ft.icons.KEYBOARD_ARROW_LEFT, on_click=self.prev_page,
-                                      tooltip=_("Prev page")),
-                        self.v_current_page,
-                        ft.IconButton(ft.icons.KEYBOARD_ARROW_RIGHT, on_click=self.next_page,
-                                      tooltip=_("Next page")),
-                        ft.IconButton(ft.icons.KEYBOARD_DOUBLE_ARROW_RIGHT, on_click=self.goto_last_page,
-                                      tooltip=_("Last page")),
-                        self.v_search,
-                        self.v_count,
-                        ft.IconButton(ft.icons.REFRESH, on_click=self.refresh_data, tooltip=_("Refresh")),
-                    ]),
-                ]),
-                padding=10,
+                ft.Column(
+                    [
+                        ft.Text(self.title, style=ft.TextThemeStyle.HEADLINE_SMALL),
+                        ft.Row(
+                            controls=[self.data_table],
+                            scroll=ft.ScrollMode.ALWAYS,
+                            spacing=10,
+                        ),
+                        ft.Row([
+                            ft.IconButton(ft.icons.KEYBOARD_DOUBLE_ARROW_LEFT, on_click=self.goto_first_page,
+                                          tooltip=_("First page")),
+                            ft.IconButton(ft.icons.KEYBOARD_ARROW_LEFT, on_click=self.prev_page,
+                                          tooltip=_("Prev page")),
+                            self.v_current_page,
+                            ft.IconButton(ft.icons.KEYBOARD_ARROW_RIGHT, on_click=self.next_page,
+                                          tooltip=_("Next page")),
+                            ft.IconButton(ft.icons.KEYBOARD_DOUBLE_ARROW_RIGHT, on_click=self.goto_last_page,
+                                          tooltip=_("Last page")),
+                            self.v_search,
+                            self.v_count,
+                            ft.IconButton(ft.icons.REFRESH, on_click=self.refresh_data, tooltip=_("Refresh")),
+                            ft.Slider(
+                                min=10,
+                                max=90,
+                                divisions=8,
+                                value=self.rows_per_page,
+                                label=_("{value} rows per page"),
+                                on_change=self.on_per_page_changed
+                            ),
+                        ]),
+                    ],
+                    scroll=ft.ScrollMode.ALWAYS
+                ),
+                padding=25,
             ),
         )
 
@@ -204,6 +227,10 @@ class ModelTableControl(ft.UserControl):
 
     def on_search_submit(self, e):
         self.goto_first_page(e)
+
+    def on_per_page_changed(self, e):
+        self.rows_per_page = int(e.control.value)
+        self.refresh_data()
 
     def refresh_data(self, *args):
         self.data_table.rows = self.build_rows()
@@ -216,7 +243,7 @@ class ModelTableControl(ft.UserControl):
         else:
             self.data_table.sort_ascending = None
             self.data_table.sort_column_index = None
-        self.v_count.value = _("row_count").format(self.num_rows)
+        self.v_count.value = _("{} rows").format(self.num_rows)
         self.v_current_page.value = f"{self.current_page}/{self.num_pages}"
         self.update()
 
